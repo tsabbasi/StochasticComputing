@@ -25,28 +25,24 @@ low = -1;
 
 allSelections = [];
 
-disp('Weapon: ');
-disp(weapon);
-disp('Enemy: ');
-disp(enemy);
+% disp('Weapon: ');
+% disp(weapon);
+% disp('Enemy: ');
+% disp(enemy);
 
 
 % wagers are placed
-houseWager = 100;
-
 prompt = 'Place a wager $50 - $1000: ';
 playerWager = input(prompt);
- 
-disp('House Value before round: ');
-disp(houseWager);
-disp('Player Value before round: ');
-disp(playerWager);
+houseWager = playerWager * 2; % house wager is double the players wager
+
+fprintf('Starting Values | House: $%d, Player: $%d\n', houseWager, playerWager);
+
 
 % user guesses the desired event
-function userGuess = dungeonsAndDragons() 
-    prompt = 'Please enter a number from 1-12: ';
-    userGuess = input(prompt);    
-end
+userGuess = @(x, n) x.^n;
+prompt = 'Please enter a number from 1-12: ';
+userGuess = input(prompt);
 
 
 for t=1:1:NUM_TRAILS
@@ -67,18 +63,14 @@ for t=1:1:NUM_TRAILS
             end
             
             if (selection == userGuess)
-                disp('The player guessed the correct number!')
-                disp('House rolled ');
-                disp(selection);
+                fprintf('House rolled: %d\n', selection);
                 playerWager = playerWager + houseWager;
                 houseWager = 0;
                 disp('Nice! The ')
                 fprintf('Nice! The %s was killed with your %s\n',enemy, weapon);
                 break;
             else
-                disp('Wrong guess');
-                disp('House rolled: ');
-                disp(selection);
+                fprintf('House rolled: %d\n', selection);
                 houseWager = houseWager + playerWager;
                 playerWager = 0;
                 fprintf('Uh oh. The %s killed you and took your %s\n',enemy, weapon);
@@ -89,17 +81,13 @@ for t=1:1:NUM_TRAILS
             if ((rndVal >= low) && (rndVal < high))
                 selection = i;
                 if (selection == userGuess)
-                    disp('The user guessed the correct number!')
-                    disp('House rolled: ');
-                    disp(selection);
+                    fprintf('House rolled: %d\n', selection);
                     playerWager = playerWager + houseWager;
                     houseWager = 0;
                     fprintf('Nice! The %s was killed with your %s\n',enemy, weapon);
                     break;
                 else
-                    disp('Wrong guess');
-                    disp('House rolled: ');
-                    disp(selection);
+                    fprintf('House rolled: %d\n', selection);
                     houseWager = houseWager + playerWager;
                     playerWager = 0;
                     fprintf('Uh oh. The %s killed you and took your %s\n',enemy, weapon);
@@ -112,17 +100,17 @@ for t=1:1:NUM_TRAILS
     
     allSelections = [allSelections selection];
     
-    disp('House Value after round: ');
-    disp(houseWager);
-    disp('Player Value after round: ');
-    disp(playerWager);
-    
+    fprintf('Final Values | House: $%d, Player: $%d\n', houseWager, playerWager);
+  
     msg = sprintf('trial(%d) = %s',t,omega{selection});
     
     if (DEBUG)
         disp(msg);
     end
+end 
+
+if playerWager == 0
+    disp('You lost! :(');
+else 
+    disp('You won!');
 end
-
-
-disp('done');

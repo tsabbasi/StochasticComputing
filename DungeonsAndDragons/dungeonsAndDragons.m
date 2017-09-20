@@ -25,24 +25,23 @@ low = -1;
 
 allSelections = [];
 
-disp('Weapon: ');
-disp(weapon);
-disp('Enemy: ');
-disp(enemy);
+% disp('Weapon: ');
+% disp(weapon);
+% disp('Enemy: ');
+% disp(enemy);
 
 
 % wagers are placed
-houseWager = 100;
-
 prompt = 'Place a wager $50 - $1000: ';
 playerWager = input(prompt);
+houseWager = playerWager * 2; % house wager is double the players wager
 
 fprintf('Starting Values | House: $%d, Player: $%d\n', houseWager, playerWager);
 
 
 % user guesses the desired event
 prompt = 'Please enter a number from 1-12: ';
-userGuess = input(prompt);    
+userGuess = input(prompt);
 
 
 for t=1:1:NUM_TRAILS
@@ -107,7 +106,10 @@ for t=1:1:NUM_TRAILS
     if (DEBUG)
         disp(msg);
     end
+end 
+
+if playerWager == 0
+    disp('You lost! :(');
+else 
+    disp('You won!');
 end
-
-
-disp('done');
