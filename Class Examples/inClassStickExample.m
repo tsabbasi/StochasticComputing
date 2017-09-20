@@ -8,7 +8,7 @@ OMEGA_SIZE = length(omega);
 
 stick = stickValues/OMEGA_SIZE;
 
-NUM_TRAILS = 1;
+NUM_TRAILS = 50;
 
 high = -1;
 low = -1;
