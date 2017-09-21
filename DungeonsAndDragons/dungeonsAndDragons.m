@@ -9,36 +9,42 @@ OMEGA_SIZE = length(omega);
 
 stick = stickValues/OMEGA_SIZE;
 
+houseWins = 0;
+playerWins = 0;
+
 % game components (weapon & enemy) to be randomely generated
 weapons = {"Club", "Dagger", "Handaxe", "Warhammer", "Crossbow"};
 enemies = {"Ogre", "Owlbear", "Lich", "Dragon", "Rust Monster"};
-
 randomWeapon = randi(size(weapons));
 randomEnemy = randi(size(enemies));
 weapon = weapons{randomWeapon};
 enemy = enemies{randomEnemy}; 
 
-% simple anonamous functions
+% userInput anonamous function
 userInput  = @(prompt) input(prompt);
-houseRoll = @(selection) fprintf('House rolled: %d\n', selection); 
-playerWon = @(enemy, weapon) fprintf('Nice! The %s was killed with your %s\n',enemy, weapon); 
-playerLost = @(enemy, weapon) fprintf('Uh oh. The %s killed you and took your %s\n',enemy, weapon);
 
-NUM_TRAILS = 1;
+NUM_TRAILS = 1000;
+
+% to keep track of selections in multiple trials
+allSelections = [];
 
 high = -1;
 low = -1;
 
-allSelections = [];
-
 % wagers are placed
 playerWager = userInput('Place a wager $50 - $1000: ');
+while (playerWager < 50) || (playerWager > 1000) % ensuring user is within range
+    playerWager = userInput('Please place a wager $50-$1000: '); 
+end
 houseWager = playerWager * 2; % house wager is double the players wager
 
 fprintf('Starting Values | House: $%d, Player: $%d\n', houseWager, playerWager);
 
 % user guesses the desired event
 userGuess = userInput('Please enter a number from 1-12: ');
+while (userGuess < 1) || (userGuess > 12)
+    userGuess = userInput('Please enter a number from 1-12: '); 
+end
 
 
 for t=1:1:NUM_TRAILS
@@ -59,20 +65,17 @@ for t=1:1:NUM_TRAILS
             end
             
             if (selection == userGuess)
-%                 houseRoll(selection);
-%                 playerWon(enemy, weapon);
                 fprintf('House rolled: %d\n', selection);
                 fprintf('Nice! The %s was killed with your %s\n',enemy, weapon);
-                playerWager = playerWager + houseWager;
-                houseWager = 0;
+                % function to update player and house wagers
+                [houseWager, playerWager] = updateWagers(houseWager, playerWager, selection, userGuess);
+                playerWins = playerWins + 1;
                 break;
             else
-%                 houseRoll(selection);
-%                 playerLost(enemy, weapon)
                 fprintf('House rolled: %d\n', selection);
                 fprintf('Uh oh. The %s killed you and took your %s\n',enemy, weapon);
-                houseWager = houseWager + playerWager;
-                playerWager = 0;
+                [houseWager, playerWager] = updateWagers(houseWager, playerWager, selection, userGuess);
+                houseWins = houseWins + 1;
                 break;
             end          
         else
@@ -80,20 +83,16 @@ for t=1:1:NUM_TRAILS
             if ((rndVal >= low) && (rndVal < high))
                 selection = i;
                 if (selection == userGuess)
-%                     houseRoll(selection);
-%                     playerWon(enemy, weapon);
                     fprintf('House rolled: %d\n', selection);
                     fprintf('Nice! The %s was killed with your %s\n',enemy, weapon);
-                    playerWager = playerWager + houseWager;
-                    houseWager = 0;                    
+                    [houseWager, playerWager] = updateWagers(houseWager, playerWager, selection, userGuess);
+                    playerWins = playerWins + 1;
                     break;
                 else
-%                     houseRoll(selection);
-%                     playerLost(enemy, weapon);
                     fprintf('House rolled: %d\n', selection);
                     fprintf('Uh oh. The %s killed you and took your %s\n',enemy, weapon);
-                    houseWager = houseWager + playerWager;
-                    playerWager = 0;
+                    [houseWager, playerWager] = updateWagers(houseWager, playerWager, selection, userGuess);
+                    houseWins = houseWins + 1;
                     break;
                 end
             end
@@ -101,6 +100,7 @@ for t=1:1:NUM_TRAILS
         
     end
     
+    % appending selection from each trial to array
     allSelections = [allSelections selection];
     
     fprintf('Final Values | House: $%d, Player: $%d\n', houseWager, playerWager);

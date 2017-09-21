@@ -1,3 +1,6 @@
+% NOTE: I realize that this is an inefficient use of the function as the condition listed below is already
+% being checked in the main file
+
 function [houseWager, playerWager] = updateWagers(houseWager, playerWager, selection, userGuess)
 
 if (selection == userGuess)
