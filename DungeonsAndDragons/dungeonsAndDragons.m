@@ -9,14 +9,20 @@ OMEGA_SIZE = length(omega);
 
 stick = stickValues/OMEGA_SIZE;
 
+% game components (weapon & enemy) to be randomely generated
 weapons = {"Club", "Dagger", "Handaxe", "Warhammer", "Crossbow"};
-
 enemies = {"Ogre", "Owlbear", "Lich", "Dragon", "Rust Monster"};
 
 randomWeapon = randi(size(weapons));
 randomEnemy = randi(size(enemies));
 weapon = weapons{randomWeapon};
 enemy = enemies{randomEnemy}; 
+
+% simple anonamous functions
+userInput  = @(prompt) input(prompt);
+houseRoll = @(selection) fprintf('House rolled: %d\n', selection); 
+playerWon = @(enemy, weapon) fprintf('Nice! The %s was killed with your %s\n',enemy, weapon); 
+playerLost = @(enemy, weapon) fprintf('Uh oh. The %s killed you and took your %s\n',enemy, weapon);
 
 NUM_TRAILS = 1;
 
@@ -25,23 +31,14 @@ low = -1;
 
 allSelections = [];
 
-% disp('Weapon: ');
-% disp(weapon);
-% disp('Enemy: ');
-% disp(enemy);
-
-
 % wagers are placed
-prompt = 'Place a wager $50 - $1000: ';
-playerWager = input(prompt);
+playerWager = userInput('Place a wager $50 - $1000: ');
 houseWager = playerWager * 2; % house wager is double the players wager
 
 fprintf('Starting Values | House: $%d, Player: $%d\n', houseWager, playerWager);
 
-
 % user guesses the desired event
-prompt = 'Please enter a number from 1-12: ';
-userGuess = input(prompt);
+userGuess = userInput('Please enter a number from 1-12: ');
 
 
 for t=1:1:NUM_TRAILS
@@ -62,17 +59,20 @@ for t=1:1:NUM_TRAILS
             end
             
             if (selection == userGuess)
+%                 houseRoll(selection);
+%                 playerWon(enemy, weapon);
                 fprintf('House rolled: %d\n', selection);
+                fprintf('Nice! The %s was killed with your %s\n',enemy, weapon);
                 playerWager = playerWager + houseWager;
                 houseWager = 0;
-                disp('Nice! The ')
-                fprintf('Nice! The %s was killed with your %s\n',enemy, weapon);
                 break;
             else
+%                 houseRoll(selection);
+%                 playerLost(enemy, weapon)
                 fprintf('House rolled: %d\n', selection);
+                fprintf('Uh oh. The %s killed you and took your %s\n',enemy, weapon);
                 houseWager = houseWager + playerWager;
                 playerWager = 0;
-                fprintf('Uh oh. The %s killed you and took your %s\n',enemy, weapon);
                 break;
             end          
         else
@@ -80,16 +80,20 @@ for t=1:1:NUM_TRAILS
             if ((rndVal >= low) && (rndVal < high))
                 selection = i;
                 if (selection == userGuess)
+%                     houseRoll(selection);
+%                     playerWon(enemy, weapon);
                     fprintf('House rolled: %d\n', selection);
-                    playerWager = playerWager + houseWager;
-                    houseWager = 0;
                     fprintf('Nice! The %s was killed with your %s\n',enemy, weapon);
+                    playerWager = playerWager + houseWager;
+                    houseWager = 0;                    
                     break;
                 else
+%                     houseRoll(selection);
+%                     playerLost(enemy, weapon);
                     fprintf('House rolled: %d\n', selection);
+                    fprintf('Uh oh. The %s killed you and took your %s\n',enemy, weapon);
                     houseWager = houseWager + playerWager;
                     playerWager = 0;
-                    fprintf('Uh oh. The %s killed you and took your %s\n',enemy, weapon);
                     break;
                 end
             end
@@ -108,8 +112,12 @@ for t=1:1:NUM_TRAILS
     end
 end 
 
+
 if playerWager == 0
     disp('You lost! :(');
 else 
     disp('You won!');
+    
+    
 end
+
